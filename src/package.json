@@ -1,0 +1,20 @@
+{
+  "name": "toy-browser",
+  "version": "1.0.0",
+  "description": "a toy browser",
+  "main": "client.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/EnzoSeason/toy-browser"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Jijie LIU",
+  "license": "MIT",
+  "dependencies": {
+    "css": "^3.0.0",
+    "images": "^3.2.3"
+  }
+}
