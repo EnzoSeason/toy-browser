@@ -15,7 +15,7 @@
     ```
 ## Run 
 
-1. start server
+1. start the server
     ```
     node server.js
     ```
