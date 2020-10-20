@@ -2,14 +2,11 @@ const http = require('http');
 const fs = require('fs');
 
 http.createServer((req, res) => {
-    let body = [];
     req.on('error', err => {
         console.log(err);
-    }).on('data', (chunk) => {
-        body.push(chunk.toString());
+    }).on('data', (_) => {
+
     }).on('end', () => {
-        body = body.join('&');
-        console.log("Body:", body);
         fs.readFile(
             './index.html', 
             (err, data) => {
