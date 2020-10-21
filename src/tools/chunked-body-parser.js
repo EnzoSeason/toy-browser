@@ -2,7 +2,7 @@ class ChunkedBodyParser {
 	constructor() {
 		this.LENGTH = 0;
 		this.LENGTH_END = 1;
-		this.READING_TRUNK = 2;
+		this.READING_CHUNK = 2;
 		this.NEW_LINE = 3;
 		this.NEW_LINE_END = 4;
 
@@ -26,9 +26,9 @@ class ChunkedBodyParser {
 			}
 		} else if (this.current === this.LENGTH_END) {
 			if (char === '\n') {
-				this.current = this.READING_TRUNK;
+				this.current = this.READING_CHUNK;
 			}
-		} else if (this.current === this.READING_TRUNK) {
+		} else if (this.current === this.READING_CHUNK) {
 			this.content.push(char);
 			this.length--;
 			if (this.length === 0) {
