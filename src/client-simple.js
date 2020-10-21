@@ -40,7 +40,6 @@ class Resquest {
                 connection.end();
             });
             connection.on('error', (error) => {
-				console.log(error),
                 reject(error);
                 connection.end();
             })
