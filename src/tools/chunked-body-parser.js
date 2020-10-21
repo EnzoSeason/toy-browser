@@ -1,4 +1,4 @@
-class TrunkedBodyParser {
+class ChunkedBodyParser {
 	constructor() {
 		this.LENGTH = 0;
 		this.LENGTH_END = 1;
@@ -46,4 +46,4 @@ class TrunkedBodyParser {
 	}
 }
 
-module.exports = TrunkedBodyParser;
+module.exports = ChunkedBodyParser;

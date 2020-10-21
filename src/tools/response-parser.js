@@ -1,4 +1,4 @@
-const TrunkedBodyParser = require('./trunked-body-parser.js');
+const ChunkedBodyParser = require('./chunked-body-parser.js');
 
 class ResponseParser {
     constructor() { 
@@ -59,7 +59,7 @@ class ResponseParser {
 			} else if (char === '\r') {
                 this.current = this.HEADER_BLOCK_END;
                 if (this.headers['Transfer-Encoding'] === 'chunked') {
-					this.bodyParser = new TrunkedBodyParser();
+					this.bodyParser = new ChunkedBodyParser();
 				}
 			} else {
 				this.headerName += char;
