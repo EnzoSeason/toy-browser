@@ -1,6 +1,6 @@
 const net = require('net');
 const images = require('images');
-const htmlParser = require('./tools/parser.js');
+const htmlParser = require('./tools/html-parser.js');
 const render = require('./tools/render.js');
 
 class Resquest {
