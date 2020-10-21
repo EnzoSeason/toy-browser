@@ -203,7 +203,7 @@ function tagOpen(c) {
         return tagName(c);
     }
 
-    return;
+    return data(c);
 }
 
 function endTagOpen(c) {
@@ -248,7 +248,7 @@ function tagName(c) {
 		currentToken.tagName += c;
         return tagName;
     }
-
+	currentToken.tagName += c;
     return tagName;
 }
 
@@ -269,15 +269,22 @@ function beforeAttributeName(c) {
 
 function afterAttributeName(c) {
 	if (c.match(/^[\t\n\f ]$/)) {
-		return afterAttributeName(c)
-	} else if (c === '/' || c === '>') {
+		return afterAttributeName;
+	} else if (c === '/') {
 		return selfClosingStartTag
+	} else if (c === '>') {
+		currentToken[currentAttribute.name] = currentAttribute.value;
+		emit(currentToken);
 	} else if (c === EOF) {
-		return data
 	} else if (c === '=') {
 		return beforeAttributeValue
 	} else {
-		return afterAttributeName
+		currentToken[currentAttribute.name] = currentAttribute.value;
+		currentAttribute = {
+			name: "",
+			value: ""
+		}
+		return afterAttributeName(c);
 	}
 }
 
@@ -295,13 +302,13 @@ function attributeName(c) {
 }
 
 function beforeAttributeValue(c) {
-	if (c.match(/^[\t\n\f ]$/)) {
+	if (c.match(/^[\t\n\f ]$/) || c === '/' || c === EOF) {
 		return beforeAttributeValue
 	} else if (c === '"') {
 		return doubleQuotedAttributeValue
 	} else if (c === "'") {
 		return singleQuotedAttributeValue
-	} else if (c === '/' || c === '>' || c === EOF) {
+	} else if ( c === '>') {
 		return data
 	} else {
 		return UnquotedAttributeValue(c)
@@ -354,9 +361,7 @@ function UnquotedAttributeValue(c) {
 
 function afterQuotedAttributeValue(c) {
 	if (c.match(/^[\t\n\f ]$/)) {
-		return afterQuotedAttributeValue
-	} else if (c.match(/^[a-zA-Z]$/)) {
-		return beforeAttributeName(c)
+		return beforeAttributeName;
 	} else if (c === '/') {
 		return selfClosingStartTag
 	} else if (c === '>') {
@@ -365,8 +370,7 @@ function afterQuotedAttributeValue(c) {
 		return data
 	} else if (c === EOF) {
 	} else {
-		currentAttribute.value += c
-		return doubleQuotedAttributeValue
+		return beforeAttributeName(c)
 	}
 }
 
@@ -382,7 +386,7 @@ function selfClosingStartTag(c) {
 
 	}
 	
-	return data;
+	return beforeAttributeName(c);
 }
 
 module.exports.parseHTML = function parseHTML(html) {
