@@ -2,16 +2,16 @@ const TrunkedBodyParser = require('./trunked-body-parser.js');
 
 class ResponseParser {
     constructor() { 
-        this.WAITING_STATUS_LINE = 0
-		this.WAITING_STATUS_LINE_END = 1
-		this.WAITING_HEADER_NAME = 2
-		this.WAITING_HEADER_SPACE = 3
-		this.WAITING_HEADER_VALUE = 4
-		this.WAITING_HEADER_LINE_END = 5
-		this.WAITING_HEADER_BLOCK_END = 6
-		this.WAITING_BODY = 7
+        this.STATUS_LINE = 0
+		this.STATUS_LINE_END = 1
+		this.HEADER_NAME = 2
+		this.HEADER_SPACE = 3
+		this.HEADER_VALUE = 4
+		this.HEADER_LINE_END = 5
+		this.HEADER_BLOCK_END = 6
+		this.BODY = 7
 
-		this.current = this.WAITING_STATUS_LINE
+		this.current = this.STATUS_LINE
 		this.statusLine = ''
 		this.headers = {}
 		this.headerName = ''
@@ -43,49 +43,49 @@ class ResponseParser {
      * @param {string} char 
      */
     receiveChar(char) {
-        if (this.current === this.WAITING_STATUS_LINE) {
+        if (this.current === this.STATUS_LINE) {
 			if (char === '\r') {
-				this.current = this.WAITING_STATUS_LINE_END
+				this.current = this.STATUS_LINE_END
 			} else {
 				this.statusLine += char
 			}
-		} else if (this.current === this.WAITING_STATUS_LINE_END) {
+		} else if (this.current === this.STATUS_LINE_END) {
 			if (char === '\n') {
-				this.current = this.WAITING_HEADER_NAME
+				this.current = this.HEADER_NAME
 			}
-		} else if (this.current === this.WAITING_HEADER_NAME) {
+		} else if (this.current === this.HEADER_NAME) {
 			if (char === ':') {
-				this.current = this.WAITING_HEADER_SPACE
+				this.current = this.HEADER_SPACE
 			} else if (char === '\r') {
-                this.current = this.WAITING_HEADER_BLOCK_END
+                this.current = this.HEADER_BLOCK_END
                 if (this.headers['Transfer-Encoding'] === 'chunked') {
 					this.bodyParser = new TrunkedBodyParser()
 				}
 			} else {
 				this.headerName += char
 			}
-		} else if (this.current === this.WAITING_HEADER_SPACE) {
+		} else if (this.current === this.HEADER_SPACE) {
 			if (char === ' ') {
-				this.current = this.WAITING_HEADER_VALUE
+				this.current = this.HEADER_VALUE
 			}
-		} else if (this.current === this.WAITING_HEADER_VALUE) {
+		} else if (this.current === this.HEADER_VALUE) {
 			if (char === '\r') {
-				this.current = this.WAITING_HEADER_LINE_END
+				this.current = this.HEADER_LINE_END
 				this.headers[this.headerName] = this.headerValue
 				this.headerName = ''
 				this.headerValue = ''
 			} else {
 				this.headerValue += char
 			}
-		} else if (this.current === this.WAITING_HEADER_LINE_END) {
+		} else if (this.current === this.HEADER_LINE_END) {
 			if (char === '\n') {
-				this.current = this.WAITING_HEADER_NAME
+				this.current = this.HEADER_NAME
 			}
-		} else if (this.current === this.WAITING_HEADER_BLOCK_END) {
+		} else if (this.current === this.HEADER_BLOCK_END) {
 			if (char === '\n') {
-				this.current = this.WAITING_BODY
+				this.current = this.BODY
 			}
-		} else if (this.current === this.WAITING_BODY) {
+		} else if (this.current === this.BODY) {
             this.bodyParser.receiveChar(char);
 		}
     }
