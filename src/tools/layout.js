@@ -184,8 +184,7 @@ function layout(element) {
             mainSpace -= itemStyle[mainSize];
         }
     }
-
-    // optional codes
+    
     flexLine.mainSpace = mainSpace;
     if (elementStyle.flexWrap === "nowrap" || isAutoMainSize) {
         flexLine.crossSpace = (elementStyle[crossSize] === void 0) ? crossSpace : elementStyle[crossSize];
