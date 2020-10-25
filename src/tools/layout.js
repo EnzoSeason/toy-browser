@@ -135,8 +135,10 @@ function layout(element) {
         isAutoMainSize = true;
     }
 
+    // save flex container into flexLines
     let flexLine = [];
     let flexLines = [flexLine];
+    // init mainSpace, crossSpace
     let mainSpace = elementStyle[mainSize];
     let crossSpace = 0;
 
@@ -185,6 +187,7 @@ function layout(element) {
         }
     }
     
+    // reset mainSpace and crossSpace for next item
     flexLine.mainSpace = mainSpace;
     if (elementStyle.flexWrap === "nowrap" || isAutoMainSize) {
         flexLine.crossSpace = (elementStyle[crossSize] === void 0) ? crossSpace : elementStyle[crossSize];
@@ -212,62 +215,62 @@ function layout(element) {
             itemStyle[mainEnd] = itemStyle[mainStart] * mainSign * itemStyle[mainSize];
             currentMain = itemStyle[mainEnd];
         }
-      } else {
-            flexLines.forEach((items) => {
-                // get flex style
-                let mainSpace = items.mainSpace;
-                let flexTotal = 0;
+    } else {
+        flexLines.forEach((items) => {
+            // get flex style
+            let mainSpace = items.mainSpace;
+            let flexTotal = 0;
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+                let itemStyle = getStyle(item);
+                if (itemStyle.flex !== null && itemStyle.flex !== void 0) {
+                    flexTotal += itemStyle.flex;
+                    continue;
+                }
+            }
+    
+            if (flexTotal > 0) { // items have flex style
+                let currentMain = mainBase;
                 for (let i = 0; i < items.length; i++) {
                     const item = items[i];
                     let itemStyle = getStyle(item);
-                    if (itemStyle.flex !== null && itemStyle.flex !== void 0) {
-                        flexTotal += itemStyle.flex;
-                        continue;
+                    if (itemStyle.flex) {
+                        itemStyle[mainSize] = (mainSpace / flexTotal) * itemStyle.flex;
                     }
+                    itemStyle[mainStart] = currentMain;
+                    itemStyle[mainEnd] = itemStyle[mainStart] + mainSign * itemStyle[mainSize];
+                    currentMain = itemStyle[mainEnd];
+                }
+            } else { // items don't have flex style
+                let currentMain = mainBase;
+                let step = 0;
+                if (style.justifyContent === 'flex-start') {
+                    // defalut setting
+                }
+                if (style.justifyContent === 'flex-end') {
+                    currentMain = mainSpace * mainSign + mainBase;
                 }
         
-                if (flexTotal > 0) { // items have flex style
-                    let currentMain = mainBase;
-                    for (let i = 0; i < items.length; i++) {
-                        const item = items[i];
-                        let itemStyle = getStyle(item);
-                        if (itemStyle.flex) {
-                            itemStyle[mainSize] = (mainSpace / flexTotal) * itemStyle.flex;
-                        }
-                        itemStyle[mainStart] = currentMain;
-                        itemStyle[mainEnd] = itemStyle[mainStart] + mainSign * itemStyle[mainSize];
-                        currentMain = itemStyle[mainEnd];
-                    }
-                } else { // items don't have flex style
-                    let currentMain = mainBase;
-                    let step = 0;
-                    if (style.justifyContent === 'flex-start') {
-                        // defalut setting
-                    }
-                    if (style.justifyContent === 'flex-end') {
-                        currentMain = mainSpace * mainSign + mainBase;
-                    }
-            
-                    if (style.justifyContent === 'center') {
-                        currensteptMain = (mainSpace / 2) * mainSign + mainBase;
-                    }
-                    if (style.justifyContent === 'space-between') {
-                        step = (mainSpace / (items.length - 1)) * mainSign;
-                    }
-                    if (style.justifyContent === 'space-around') {
-                        step = (mainSpace / items.length) * mainSign;
-                        currentMain = step / 2 + mainBase;
-                    }
-            
-                    for (let i = 0; i < items.length; i++) {
-                        const item = items[i];
-                        let itemStyle = getStyle(item);
-                        itemStyle[mainStart] = currentMain;
-                        itemStyle[mainEnd] = itemStyle[mainStart] + mainSign * itemStyle[mainSize];
-                        currentMain = itemStyle[mainEnd] + step;
-                    }
+                if (style.justifyContent === 'center') {
+                    currensteptMain = (mainSpace / 2) * mainSign + mainBase;
                 }
-            });
+                if (style.justifyContent === 'space-between') {
+                    step = (mainSpace / (items.length - 1)) * mainSign;
+                }
+                if (style.justifyContent === 'space-around') {
+                    step = (mainSpace / items.length) * mainSign;
+                    currentMain = step / 2 + mainBase;
+                }
+        
+                for (let i = 0; i < items.length; i++) {
+                    const item = items[i];
+                    let itemStyle = getStyle(item);
+                    itemStyle[mainStart] = currentMain;
+                    itemStyle[mainEnd] = itemStyle[mainStart] + mainSign * itemStyle[mainSize];
+                    currentMain = itemStyle[mainEnd] + step;
+                }
+            }
+        });
     }
     
     // calculate cross axis
