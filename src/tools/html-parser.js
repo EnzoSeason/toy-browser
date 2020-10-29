@@ -14,7 +14,7 @@ function addCSSRules(text) {
 }
 
 function specificity(selector) {
-	let p = [0, 0, 0, 0]; // inline style, id, class, tag
+	let p = [0, 0, 0, 0]; // inline style, id, class, type
 	let selectorParts = selector.split(" ");
 	for (let part of selectorParts) {
 		if (part.charAt(0) === "#") {
